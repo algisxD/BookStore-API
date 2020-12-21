@@ -1,0 +1,58 @@
+﻿@page "/rickandmorty/"
+
+@inject ICharacterRepository _repo
+
+<h3 class="card-title">Rick and morty !!!</h3>
+<br />
+<hr />
+<br />
+@if (Model == null)
+{
+    <LoadingMessage Message="Loading characters.." />
+}
+else
+{
+    @if (Model.results.Count < 1)
+    {
+        <LoadingMessage Message="There are no characters in the data store. Click 'Create author' to begin." />
+    }
+    else
+    {
+        <table class="table table-responsive">
+            <thead>
+                <tr>
+                    <th><b>First Name</b></th>
+                    <th><b>Status</b></th>
+                    <th><b>Type</b></th>
+                    <th><b>Gender</b></th>
+                    <th><b>Origin name</b></th>
+                    <th><b>Location Name</b></th>
+                    <th><b>Image</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var character in Model.results)
+                {
+                    <tr>
+                        <td>@character.name</td>
+                        <td>@character.status</td>
+                        <td>@character.type</td>
+                        <td>@character.gender</td>
+                        <td>@character.origin.name</td>
+                        <td>@character.location.name</td>
+                        <td><img src="@character.image"/></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@code {
+    private Root Model;
+
+    protected async override Task OnInitializedAsync()
+    {
+        Model = await _repo.GetList(Endpoints.RickAndMortyEndPoint);
+    }
+}

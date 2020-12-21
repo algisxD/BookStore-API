@@ -1,0 +1,92 @@
+﻿@page "/admintab/"
+
+@inject IAuthorRepository _repo
+@inject NavigationManager _navManager
+
+<h3>Admin tab for authors</h3>
+<br />
+<hr />
+
+@if(Model == null)
+{
+    <LoadingMessage Message="The page is loading.."/>
+}
+else
+{
+
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!isFiltered)
+            {
+                @foreach (var author in Model)
+                {
+                    <tr>
+                        <td>
+                            <a href="/authors/view/@author.Id">@author.FirstName</a>
+                        </td>
+                        <td>@author.LastName</td>
+                        <td></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                @foreach (var author in FilteredModel)
+                {
+                    <tr>
+                        <td>
+                            <a href="/authors/view/@author.Id">@author.FirstName</a>
+                        </td>
+                        <td>@author.LastName</td>
+                        <td></td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+<form>
+    <div class="col-4 form-group">
+        <label for="filterText">Enter string to filter:</label>
+        <input @bind="searchString" type="text" class="form-control" placeholder="Filter by name" />
+        <br />
+        <button type="button" @onclick="Filter" class="btn btn-primary">Filtruoti</button>
+    </div>  
+</form>
+
+@code {
+    private IList<Author> Model;
+    private IList<Author> FilteredModel = new List<Author>();
+    private bool isFiltered = false;
+    private string searchString = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model = await _repo.GetList(Endpoints.AuthorsEndPoint);
+    }
+
+    private void Filter()
+    {
+        foreach (var author in Model)
+        {
+            if(author.FirstName.Contains(searchString))
+            {
+                FilteredModel.Add(author);
+            }
+        }
+        isFiltered = true;
+    }
+
+    private void BackToList()
+    {
+        _navManager.NavigateTo("/books/");
+    }
+}

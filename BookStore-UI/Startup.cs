@@ -45,6 +45,7 @@ namespace BookStore_UI
             services.AddTransient<IAuthorRepository, AuthorRepository>();
             services.AddTransient<IBookRepository, BookRepository>();
             services.AddTransient<IFileUpload, FileUpload>();
+            services.AddTransient<ICharacterRepository, CharacterRepository>();
             //services.AddSingleton<WeatherForecastService>();
         }
 
